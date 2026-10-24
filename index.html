@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f8f5">
+  <meta name="description" content="Portofolio Deni Somantri: analisis data, riset pasar, Python, dan prototipe web untuk mengubah data menjadi insight yang dapat ditinjau.">
+  <meta property="og:title" content="Deni Somantri — Data Analytics & Market Research">
+  <meta property="og:description" content="Portofolio analisis data, riset pasar, dan prototipe workbench CSV/Excel.">
+  <meta property="og:type" content="website">
+  <title>Deni Somantri — Data Analytics &amp; Market Research</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #19241f;
+      --muted: #69756d;
+      --paper: #f7f8f5;
+      --white: #fff;
+      --line: #e4e9e3;
+      --green: #237c5a;
+      --green-dark: #15583f;
+      --mint: #e5f2e9;
+      --orange: #ee8757;
+      --radius-card: 14px;
+      --shadow-soft: 0 12px 34px rgb(32 58 43 / 6%);
+      --serif: Georgia, "Times New Roman", serif;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+    a:focus-visible, button:focus-visible { outline: 3px solid #ef9a6d; outline-offset: 4px; }
+    .wrap { width: min(1120px, calc(100% - 48px)); margin-inline: auto; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--green);
+      font-size: .76rem;
+      font-weight: 750;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .eyebrow::before { width: 22px; height: 1px; background: currentColor; content: ""; }
+
+    header {
+      position: sticky;
+      z-index: 5;
+      top: 0;
+      border-bottom: 1px solid rgb(228 233 227 / 80%);
+      background: rgb(247 248 245 / 92%);
+      backdrop-filter: blur(14px);
+    }
+    .nav {
+      display: flex;
+      min-height: 76px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand { display: inline-flex; align-items: center; gap: 11px; font-size: .95rem; font-weight: 760; }
+    .brand-mark {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border-radius: 11px;
+      background: var(--green);
+      color: white;
+      font-size: .82rem;
+      letter-spacing: -.07em;
+    }
+    .nav-links { display: flex; align-items: center; gap: 31px; color: #455149; font-size: .88rem; }
+    .nav-links a:hover { color: var(--green); }
+    .nav-cta, .button {
+      display: inline-flex;
+      min-height: 45px;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      border: 1px solid var(--green);
+      border-radius: 8px;
+      background: var(--green);
+      color: white;
+      font-size: .87rem;
+      font-weight: 680;
+      transition: transform .2s ease, background .2s ease;
+    }
+    .nav-cta { min-height: 40px; padding: 0 17px; }
+    .button { padding: 0 20px; }
+    .button:hover, .nav-cta:hover { transform: translateY(-2px); background: var(--green-dark); }
+    .button.secondary { border-color: var(--line); background: transparent; color: var(--ink); }
+    .button.secondary:hover { border-color: var(--green); background: var(--white); color: var(--green); }
+    .menu-toggle { display: none; }
+
+    .hero { position: relative; overflow: hidden; padding: 68px 0 60px; background: linear-gradient(115deg, #f7f8f5 0%, #f7f8f5 54%, #f1f6f0 100%); }
+    .hero::after {
+      position: absolute;
+      z-index: -1;
+      top: -145px;
+      right: -80px;
+      width: 590px;
+      height: 590px;
+      border: 1px solid #dfe9df;
+      border-radius: 50%;
+      box-shadow: 0 0 0 50px rgb(229 242 233 / 45%), 0 0 0 105px rgb(229 242 233 / 25%);
+      content: "";
+    }
+    .hero-grid { display: grid; grid-template-columns: 1.08fr .92fr; align-items: center; gap: 60px; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      max-width: 670px;
+      margin: 17px 0 20px;
+      font-family: var(--serif);
+      font-size: clamp(3rem, 5.8vw, 5rem);
+      font-weight: 500;
+      letter-spacing: -.065em;
+      line-height: .99;
+    }
+    h1 em { color: var(--green); font-weight: 500; }
+    .hero-copy { max-width: 535px; margin-bottom: 28px; color: var(--muted); font-size: 1.05rem; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    .hero-skills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+    .hero-skills span { padding: 6px 10px; border: 1px solid var(--line); border-radius: 30px; background: rgb(255 255 255 / 75%); color: #536057; font-size: .7rem; font-weight: 650; }
+    .hero-role { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; color: #536057; font-size: .78rem; font-weight: 700; }
+    .hero-role::before { width: 20px; height: 1px; background: var(--orange); content: ""; }
+    .availability { display: flex; align-items: center; gap: 9px; margin-top: 34px; color: var(--muted); font-size: .82rem; }
+    .availability span { width: 8px; height: 8px; border-radius: 50%; background: #5eaa75; box-shadow: 0 0 0 4px #dff0e3; }
+
+    .insight-card {
+      position: relative;
+      padding: 25px;
+      border: 1px solid #e4eae3;
+      border-radius: 14px;
+      background: rgb(255 255 255 / 93%);
+      box-shadow: 0 24px 70px rgb(32 58 43 / 9%);
+      transform: rotate(.4deg);
+    }
+    .card-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .card-label { color: var(--muted); font-size: .76rem; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; }
+    .card-tag { padding: 5px 9px; border-radius: 20px; background: var(--mint); color: var(--green-dark); font-size: .69rem; font-weight: 700; }
+    .demo-switch { display: flex; gap: 6px; margin-top: 23px; padding: 4px; border-radius: 9px; background: #f1f4f0; }
+    .demo-switch button { flex: 1; min-height: 34px; border: 0; border-radius: 7px; background: transparent; color: var(--muted); font-size: .7rem; font-weight: 700; cursor: pointer; }
+    .demo-switch button[aria-selected="true"] { background: white; color: var(--green-dark); box-shadow: 0 1px 4px rgb(25 36 31 / 9%); }
+    .demo-panel { min-height: 247px; padding: 20px 4px 2px; }
+    .demo-panel[hidden] { display: none; }
+    .demo-panel-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .demo-panel-head strong { display: block; font-size: .87rem; }
+    .demo-panel-head span { display: block; margin-top: 3px; color: var(--muted); font-size: .67rem; }
+    .demo-status { padding: 4px 7px; border-radius: 20px; background: #eef5ef; color: var(--green-dark); font-size: .61rem !important; font-weight: 700; }
+    .profile-preview { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 17px; }
+    .profile-preview div { min-height: 60px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: #fcfdfa; }
+    .profile-preview strong { display: block; color: var(--green-dark); font-size: .72rem; }
+    .profile-preview span { display: block; margin-top: 3px; color: var(--muted); font-size: .62rem; line-height: 1.4; }
+    .demo-summary { margin: 12px 0 0; color: #536057; font-size: .68rem; }
+    .chart-title { margin: 13px 0 5px; font-family: var(--serif); font-size: 1.35rem; font-weight: 500; }
+    .chart-subtitle { margin-bottom: 18px; color: var(--muted); font-size: .71rem; }
+    .bar-row { display: grid; grid-template-columns: 83px 1fr 26px; align-items: center; gap: 11px; margin: 13px 0; font-size: .75rem; }
+    .bar-name { color: #46524a; }
+    .bar-track { overflow: hidden; height: 8px; border-radius: 20px; background: #edf1ec; }
+    .bar { height: 100%; border-radius: inherit; background: #4b9d71; }
+    .bar-row:nth-of-type(2) .bar { background: #75b88d; }
+    .bar-row:nth-of-type(3) .bar { background: #9dcaab; }
+    .bar-num { color: #657168; text-align: right; }
+    .card-foot { display: flex; justify-content: space-between; gap: 8px; margin-top: 15px; padding-top: 13px; border-top: 1px solid var(--line); color: var(--muted); font-size: .67rem; }
+    .demo-note { margin: 12px 0 0; color: var(--muted); font-size: .65rem; }
+    .proof { border-block: 1px solid var(--line); background: #fff; }
+    .proof-grid { display: grid; grid-template-columns: repeat(3, 1fr); padding: 25px 0; }
+    .proof-item { padding: 0 25px; border-right: 1px solid var(--line); }
+    .proof-item:first-child { padding-left: 0; }
+    .proof-item:last-child { border: 0; }
+    .proof-item strong { display: block; font-family: var(--serif); font-size: 1.7rem; font-weight: 500; letter-spacing: -.04em; }
+    .proof-item span { color: var(--muted); font-size: .8rem; }
+    .button.project-cta { min-height: 39px; margin-top: 16px; padding-inline: 13px; font-size: .76rem; }
+    .project:nth-child(2) { border-color: #c8dbce; background: linear-gradient(155deg, #fff 45%, #f2f8f3); box-shadow: var(--shadow-soft); }
+    .project:nth-child(2) .project-icon { background: var(--green); color: white; }
+
+    section { scroll-margin-top: 90px; }
+    .section { padding: 88px 0; }
+    .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 30px; margin-bottom: 35px; }
+    h2 { margin: 11px 0 0; font-family: var(--serif); font-size: clamp(2.1rem, 4vw, 3.2rem); font-weight: 500; letter-spacing: -.055em; line-height: 1.08; }
+    .section-heading p { max-width: 380px; margin: 0 0 4px; color: var(--muted); font-size: .92rem; }
+
+    .projects { display: grid; grid-template-columns: repeat(3, 1fr); gap: 17px; }
+    .project {
+      display: flex;
+      min-height: 325px;
+      flex-direction: column;
+      padding: 25px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-card);
+      background: var(--white);
+      box-shadow: 0 5px 18px rgb(32 58 43 / 3%);
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .project:hover { transform: translateY(-4px); border-color: #c8dbce; box-shadow: 0 18px 36px rgb(32 58 43 / 8%); }
+    .project-icon {
+      display: grid;
+      width: 43px;
+      height: 43px;
+      margin-bottom: 22px;
+      place-items: center;
+      border-radius: 12px;
+      background: var(--mint);
+      color: var(--green);
+      font-size: 1.14rem;
+    }
+    .project:nth-child(2) .project-icon { background: #fbeee6; color: #bd653a; }
+    .project:nth-child(3) .project-icon { background: #edf0fb; color: #5868a4; }
+    .project-type { margin-bottom: 7px; color: var(--green); font-size: .7rem; font-weight: 750; letter-spacing: .09em; text-transform: uppercase; }
+    .project h3 { margin-bottom: 8px; font-family: var(--serif); font-size: 1.37rem; font-weight: 500; letter-spacing: -.025em; }
+    .project p { margin-bottom: 19px; color: var(--muted); font-size: .82rem; }
+    .project-meta { display: flex; flex-wrap: wrap; gap: 7px; margin-top: auto; }
+    .project-cta { align-self: flex-start; margin-top: 16px; font-size: .78rem; }
+    .chip { padding: 5px 9px; border-radius: 20px; background: #f2f5f1; color: #536057; font-size: .68rem; }
+
+    .case-section { background: #fff; }
+    .case-layout { display: grid; grid-template-columns: .8fr 1.2fr; gap: 48px; align-items: start; }
+    .case-intro p { max-width: 370px; margin: 18px 0 0; color: var(--muted); font-size: .9rem; }
+    .case-panel { padding: 28px; border: 1px solid var(--line); border-radius: var(--radius-card); background: var(--paper); box-shadow: var(--shadow-soft); }
+    .case-label { display: inline-flex; margin-bottom: 14px; padding: 5px 9px; border-radius: 20px; background: var(--mint); color: var(--green-dark); font-size: .68rem; font-weight: 750; letter-spacing: .03em; }
+    .case-panel h3 { margin-bottom: 8px; font-family: var(--serif); font-size: 1.55rem; font-weight: 500; letter-spacing: -.03em; }
+    .case-summary { margin-bottom: 22px; color: var(--muted); font-size: .82rem; }
+    .case-flow { display: grid; grid-template-columns: 1fr 1fr; gap: 17px 20px; }
+    .case-item { padding: 13px; border: 1px solid var(--line); border-radius: 9px; background: white; }
+    .case-item strong { display: block; margin-bottom: 5px; color: var(--green-dark); font-size: .77rem; }
+    .case-item p { margin: 0; color: #59655d; font-size: .78rem; }
+    .case-outcome { margin-top: 20px; padding: 13px 15px; border-left: 2px solid var(--orange); border-radius: 0 7px 7px 0; background: #fffaf6; color: #695e55; font-size: .77rem; }
+    .case-cta { margin-top: 20px; font-size: .8rem; }
+    .business-value { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 33px; }
+    .value-card { padding: 21px; border: 1px solid var(--line); border-radius: 12px; background: white; transition: transform .2s ease, box-shadow .2s ease; }
+    .value-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-soft); }
+    .value-card span { display: block; margin-bottom: 9px; color: var(--green); font-size: .7rem; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
+    .value-card h3 { margin-bottom: 6px; font-size: .9rem; }
+    .value-card p { margin: 0; color: var(--muted); font-size: .77rem; }
+    .roles-section { padding: 78px 0; background: #f0f4ef; }
+    .roles-grid { display: grid; grid-template-columns: .8fr 1.2fr; align-items: center; gap: 48px; }
+    .roles-grid h2 { max-width: 430px; }
+    .roles-intro { max-width: 440px; margin: 14px 0 0; color: var(--muted); font-size: .87rem; }
+    .role-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .role-item { display: flex; align-items: center; gap: 11px; min-height: 60px; padding: 12px; border: 1px solid #dfe8df; border-radius: 9px; background: white; font-size: .79rem; font-weight: 700; box-shadow: 0 4px 12px rgb(32 58 43 / 3%); }
+    .role-item span { display: grid; width: 29px; height: 29px; flex: 0 0 auto; place-items: center; border-radius: 8px; background: var(--mint); color: var(--green-dark); font-size: .7rem; }
+
+    .process-section { background: #edf3ec; }
+    .process-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; margin-top: 39px; }
+    .step { min-height: 190px; padding: 18px; border: 1px solid #dce6dc; border-radius: 12px; background: rgb(255 255 255 / 78%); }
+    .step-num { display: inline-flex; padding: 5px 8px; border-radius: 20px; background: var(--mint); color: var(--green-dark); font-size: .69rem; font-weight: 750; }
+    .step h3 { margin: 19px 0 8px; font-size: .99rem; }
+    .step p { margin: 0; color: var(--muted); font-size: .81rem; }
+    .about-grid { display: grid; grid-template-columns: .85fr 1.15fr; gap: 80px; align-items: start; }
+    .about-copy { color: var(--muted); font-size: .96rem; }
+    .about-copy strong { color: var(--ink); }
+    .skills { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 24px; }
+    .skills .chip { padding: 8px 12px; background: white; border: 1px solid var(--line); font-size: .77rem; }
+    .note {
+      margin-top: 20px;
+      padding: 14px 16px;
+      border-left: 2px solid var(--orange);
+      background: #fffaf6;
+      color: #695e55;
+      font-size: .77rem;
+    }
+    .contact { padding: 72px 0; background: #193d2d; color: white; }
+    .contact-inner { display: flex; align-items: center; justify-content: space-between; gap: 35px; }
+    .contact .eyebrow { color: #9fd3ad; }
+    .contact h2 { max-width: 600px; margin: 13px 0 10px; }
+    .contact p { margin: 0; color: #c6d8cb; font-size: .9rem; }
+    .contact .button { flex: 0 0 auto; border-color: white; background: white; color: #193d2d; }
+    .contact .button:hover { background: #e4f0e7; }
+    .contact-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+    .contact .contact-link { border-color: rgb(255 255 255 / 55%); background: transparent; color: white; }
+    .contact .contact-link:hover { background: rgb(255 255 255 / 12%); }
+    footer { padding: 21px 0; background: #123323; color: #c6d8cb; font-size: .75rem; }
+    .footer-inner { display: flex; justify-content: space-between; gap: 20px; }
+    footer a { color: white; text-decoration: underline; text-underline-offset: 3px; }
+
+    @media (max-width: 920px) {
+      .contact-inner { align-items: flex-start; flex-direction: column; }
+      .contact-actions { width: 100%; }
+    }
+    @media (max-width: 850px) {
+      .hero-grid { grid-template-columns: 1fr .9fr; gap: 30px; }
+      .projects { grid-template-columns: repeat(2, 1fr); }
+      .project:last-child { grid-column: span 2; min-height: 250px; }
+      .case-layout { grid-template-columns: 1fr; gap: 26px; }
+      .about-grid { gap: 40px; }
+      .roles-grid { grid-template-columns: 1fr; gap: 25px; }
+      .nav-links { gap: 18px; }
+    }
+    @media (max-width: 650px) {
+      .wrap { width: min(100% - 36px, 500px); }
+      .nav { min-height: 66px; }
+      .menu-toggle {
+        display: grid;
+        width: 40px;
+        height: 40px;
+        place-items: center;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: white;
+        color: var(--ink);
+        font-size: 1.1rem;
+      }
+      .nav-links {
+        position: absolute;
+        top: 65px;
+        right: 18px;
+        left: 18px;
+        display: none;
+        align-items: stretch;
+        gap: 0;
+        padding: 9px 16px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: white;
+        box-shadow: 0 15px 30px rgb(32 58 43 / 10%);
+      }
+      .nav-links.open { display: flex; flex-direction: column; }
+      .nav-links a { padding: 11px 0; }
+      .nav-links .nav-cta { margin: 7px 0; text-align: center; }
+      .hero { padding: 63px 0 56px; }
+      .hero-grid { grid-template-columns: 1fr; gap: 43px; }
+      h1 { font-size: clamp(3.15rem, 15vw, 4.2rem); }
+      .hero-copy { font-size: .97rem; }
+      .insight-card { width: 100%; margin-left: 0; transform: none; }
+      .proof-grid { grid-template-columns: repeat(3, 1fr); padding: 19px 0; }
+      .proof-item { padding: 0 9px; }
+      .proof-item strong { font-size: 1.35rem; }
+      .proof-item span { font-size: .67rem; line-height: 1.35; }
+      .section { padding: 68px 0; }
+      .section-heading { align-items: start; flex-direction: column; gap: 15px; }
+      .section-heading p { font-size: .86rem; }
+      .projects { grid-template-columns: 1fr; }
+      .project, .project:last-child { grid-column: auto; min-height: 0; padding: 21px; }
+      .case-panel { padding: 19px; }
+      .case-flow { grid-template-columns: 1fr; gap: 9px; }
+      .business-value { grid-template-columns: 1fr; gap: 10px; margin-top: 19px; }
+      .roles-section { padding: 60px 0; }
+      .role-list { grid-template-columns: 1fr; }
+      .value-card { padding: 16px; }
+      .process-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+      .process-grid .step { min-height: 180px; padding: 14px; }
+      .process-grid .step h3 { margin-top: 15px; }
+      .proof-item strong { font-size: 1.12rem; }
+      .about-grid { grid-template-columns: 1fr; gap: 22px; }
+      .contact-inner { align-items: flex-start; flex-direction: column; }
+      .contact-actions { width: 100%; }
+      .footer-inner { align-items: flex-start; flex-direction: column; gap: 4px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="nav wrap" aria-label="Navigasi utama">
+      <a class="brand" href="#beranda" aria-label="Kembali ke beranda">
+        <span class="brand-mark">DS</span>
+        <span>Deni Somantri</span>
+      </a>
+      <button class="menu-toggle" type="button" aria-label="Buka menu" aria-expanded="false">☰</button>
+      <div class="nav-links">
+        <a href="#proyek">Proyek</a>
+        <a href="#studi-kasus">Studi kasus</a>
+        <a href="#proses">Cara kerja</a>
+        <a href="#peluang">Peluang</a>
+        <a href="#tentang">Tentang</a>
+        <a class="nav-cta" href="/app">Coba aplikasi <span aria-hidden="true">↗</span></a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="beranda">
+      <div class="hero-grid wrap">
+        <div>
+          <span class="eyebrow">DATA ANALYTICS · MARKET RESEARCH</span>
+          <h1>Data yang jelas.<br><em>Langkah yang terarah.</em></h1>
+          <div class="hero-role">Portofolio Data Analyst &amp; Market Research</div>
+          <p class="hero-copy">Saya Deni Somantri. Saya membangun analisis data dan prototipe aplikasi untuk merapikan data, menemukan pola awal, serta menyampaikan temuan beserta keterbatasannya—agar tim tahu apa yang perlu diperiksa atau diuji selanjutnya.</p>
+          <div class="hero-actions">
+            <a class="button" href="#proyek">Jelajahi proyek <span aria-hidden="true">↓</span></a>
+            <a class="button secondary" href="/app">Coba prototipe data <span aria-hidden="true">↗</span></a>
+          </div>
+          <div class="hero-skills" aria-label="Fokus dan tools">
+            <span>Python &amp; Pandas</span><span>Analisis data</span><span>Riset pasar</span><span>Flask</span>
+          </div>
+          <div class="availability"><span></span> Terbuka untuk peluang kerja dan kolaborasi</div>
+        </div>
+        <div class="insight-card" aria-label="Pratinjau interaktif hasil aplikasi analisis data">
+          <div class="card-top">
+            <span class="card-label">Pratinjau workbench</span>
+            <span class="card-tag">Prototipe</span>
+          </div>
+          <div class="demo-switch" role="tablist" aria-label="Pilih contoh analisis">
+            <button type="button" role="tab" id="demo-tab-profile" aria-selected="true" aria-controls="demo-profile">Profil data</button>
+            <button type="button" role="tab" id="demo-tab-content" aria-selected="false" aria-controls="demo-content">Riset konten</button>
+          </div>
+          <div class="demo-panel" id="demo-profile" role="tabpanel" aria-labelledby="demo-tab-profile">
+            <div class="demo-panel-head">
+              <div><strong>Kenali isi file sebelum dianalisis</strong><span>Ringkasan CSV / Excel per kolom</span></div>
+              <span class="demo-status">DATA PROFILE</span>
+            </div>
+            <div class="profile-preview">
+              <div><strong>Angka</strong><span>Rentang · rata-rata · median</span></div>
+              <div><strong>Kategori</strong><span>Nilai yang paling sering muncul</span></div>
+              <div><strong>Tanggal</strong><span>Rentang periode yang tersedia</span></div>
+              <div><strong>Kualitas</strong><span>Sel kosong · contoh baris</span></div>
+            </div>
+            <p class="demo-summary">Mulai dari kondisi data yang nyata, bukan asumsi.</p>
+          </div>
+          <div class="demo-panel" id="demo-content" role="tabpanel" aria-labelledby="demo-tab-content" hidden>
+            <div class="demo-panel-head">
+              <div><strong>Atribut yang muncul pada sampel</strong><span>Contoh studi caption produk</span></div>
+              <span class="demo-status">14 CAPTION</span>
+            </div>
+            <p class="chart-subtitle">Frekuensi kata dalam sampel mandiri · bukan jumlah pelanggan</p>
+            <div class="bar-row"><span class="bar-name">elegan</span><div class="bar-track"><div class="bar" style="width: 86%"></div></div><span class="bar-num">6</span></div>
+            <div class="bar-row"><span class="bar-name">cocok</span><div class="bar-track"><div class="bar" style="width: 72%"></div></div><span class="bar-num">5</span></div>
+            <div class="bar-row"><span class="bar-name">muat</span><div class="bar-track"><div class="bar" style="width: 57%"></div></div><span class="bar-num">4</span></div>
+            <div class="card-foot"><span>Hasil eksploratif</span><span>Perlu validasi</span></div>
+          </div>
+          <p class="demo-note">Gunakan tab untuk melihat contoh dua mode analisis yang tersedia.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="proof" aria-label="Ringkasan portofolio">
+      <div class="proof-grid wrap">
+        <div class="proof-item"><strong>Data profiling</strong><span>Ringkas angka, kategori, tanggal, teks, dan data kosong</span></div>
+        <div class="proof-item"><strong>Riset konten</strong><span>Bandingkan tema caption antar merek</span></div>
+        <div class="proof-item"><strong>Hasil transparan</strong><span>Contoh data, metodologi, dan laporan Excel</span></div>
+      </div>
+    </div>
+
+    <section class="section" id="proyek">
+      <div class="wrap">
+        <div class="section-heading">
+          <div><span class="eyebrow">Pilihan karya</span><h2>Proyek yang<br>berangkat dari data.</h2></div>
+          <p>Proyek portofolio ini menunjukkan alur dari sumber data menuju analisis yang dapat ditinjau: pemeriksaan kualitas, ringkasan yang jelas, dan pertanyaan bisnis untuk langkah berikutnya.</p>
+        </div>
+        <div class="projects">
+          <article class="project">
+            <div class="project-icon" aria-hidden="true">◌</div>
+            <span class="project-type">Studi mandiri · analisis teks</span>
+            <h3>Mengeksplorasi bahasa konten produk</h3>
+            <p>Membersihkan sampel caption, mengelompokkan tema dan kata yang muncul, lalu menyusun workbook agar temuan dapat ditinjau kembali.</p>
+            <div class="project-meta"><span class="chip">Python</span><span class="chip">Pandas</span><span class="chip">Analisis teks</span><span class="chip">Excel</span></div>
+          </article>
+          <article class="project" id="aplikasi-analisis">
+            <div class="project-icon" aria-hidden="true">↗</div>
+            <span class="project-type">Prototipe aplikasi · Flask</span>
+            <h3>Workbench analisis data interaktif</h3>
+            <p>Unggah CSV/Excel untuk melihat profil angka, kategori, tanggal, teks, dan data kosong; atau bandingkan tema caption antar merek. Hasil dapat diekspor ke Excel.</p>
+            <div class="project-meta"><span class="chip">Python + Pandas</span><span class="chip">Flask</span><span class="chip">CSV / Excel</span><span class="chip">Validasi hasil</span></div>
+            <a class="button project-cta" href="/app">Buka aplikasi analisis <span aria-hidden="true">↗</span></a>
+          </article>
+          <article class="project">
+            <div class="project-icon" aria-hidden="true">⌁</div>
+            <span class="project-type">Studi mandiri · riset produk</span>
+            <h3>Mengamati angle konten produk</h3>
+            <p>Menggunakan sampel caption untuk mengeksplorasi bagaimana atribut dan cara penggunaan produk disampaikan.</p>
+            <div class="project-meta"><span class="chip">Pembersihan data</span><span class="chip">Kategorisasi</span><span class="chip">Hipotesis uji</span></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section case-section" id="studi-kasus">
+      <div class="case-layout wrap">
+        <div class="case-intro">
+          <span class="eyebrow">STUDI KASUS · RISET PASAR DIGITAL</span>
+          <h2>Dari data publik ke pertanyaan yang bisa ditindaklanjuti.</h2>
+          <p>Contoh studi mandiri: mulai dari pertanyaan bisnis, periksa kualitas sampel, jelaskan apa yang terlihat, lalu usulkan langkah validasi yang realistis.</p>
+        </div>
+        <article class="case-panel">
+          <span class="case-label">Proyek portofolio · data eksploratif, bukan proyek klien</span>
+          <h3>Memahami sinyal konten produk tas wanita</h3>
+          <p class="case-summary">Pertanyaan riset: tema dan atribut apa yang muncul pada sampel konten, dan apa yang layak divalidasi setelahnya?</p>
+          <div class="case-flow">
+            <div class="case-item"><strong>01 · Tujuan</strong><p>Menyusun gambaran awal angle konten produk dari sampel yang tersedia.</p></div>
+            <div class="case-item"><strong>02 · Pengumpulan</strong><p>Mengolah sampel kecil berisi 14 caption terkait tas wanita aesthetic.</p></div>
+            <div class="case-item"><strong>03 · Temuan sampel</strong><p>Frekuensi kata pada sampel mencatat “elegan” 6, “cocok” 5, dan “muat” 4 kali—bukan jumlah orang atau pembeli.</p></div>
+            <div class="case-item"><strong>04 · Arah tindak lanjut</strong><p>Uji beberapa pesan—misalnya gaya desain versus kapasitas—dan bandingkan respons audiens.</p></div>
+          </div>
+          <div class="case-outcome"><strong>Relevansi bagi tim:</strong> workflow ini dapat membantu menyaring sinyal awal, menampilkan contoh yang mendukung ringkasan, dan merumuskan hipotesis konten untuk diuji. Belum ada klaim peningkatan penjualan; sampel kecil ini memerlukan validasi lanjutan.</div>
+          <div class="case-outcome"><strong>Prinsip kerja:</strong> untuk proyek perusahaan, sumber dan metode pengambilan data perlu sesuai aturan platform, regulasi, privasi, dan otorisasi yang berlaku.</div>
+          <a class="button case-cta" href="/app">Coba prototipe analisis data <span aria-hidden="true">↗</span></a>
+        </article>
+      </div>
+      <div class="business-value wrap" aria-label="Manfaat alur analisis data bagi tim">
+        <article class="value-card"><span>Analisis operasional</span><h3>Kenali kondisi data</h3><p>Lihat distribusi angka, kategori, periode, dan kelengkapan sebelum tim menyusun analisis lanjutan.</p></article>
+        <article class="value-card"><span>Riset pasar</span><h3>Susun hipotesis dari sampel</h3><p>Bandingkan tema konten dan tampilkan contoh pendukung sebagai masukan untuk riset atau eksperimen.</p></article>
+        <article class="value-card"><span>Pelaporan</span><h3>Bagikan hasil yang dapat ditinjau</h3><p>Sajikan metodologi, keterbatasan, dan ringkasan data dalam format yang praktis untuk diskusi tim.</p></article>
+      </div>
+    </section>
+
+    <section class="section process-section" id="proses">
+      <div class="wrap">
+        <span class="eyebrow">Dari sumber ke insight</span>
+        <h2>Terstruktur, transparan,<br>siap dikembangkan.</h2>
+        <div class="process-grid">
+          <article class="step"><span class="step-num">01 / Definisikan</span><h3>Mulai dari pertanyaan</h3><p>Perjelas kebutuhan keputusan dan tentukan ukuran yang relevan sebelum menganalisis.</p></article>
+          <article class="step"><span class="step-num">02 / Periksa</span><h3>Pahami kualitas data</h3><p>Tinjau tipe kolom, nilai kosong, duplikasi, rentang, dan keterbatasan sumber.</p></article>
+          <article class="step"><span class="step-num">03 / Analisis</span><h3>Jelaskan pola dan bukti</h3><p>Gunakan ringkasan yang sesuai dengan tipe data, lalu tampilkan contoh pendukung.</p></article>
+          <article class="step"><span class="step-num">04 / Tindak lanjuti</span><h3>Uji sebelum menyimpulkan</h3><p>Terjemahkan pola awal menjadi pertanyaan validasi atau eksperimen yang terukur.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="roles-section" id="peluang" aria-labelledby="roles-title">
+      <div class="roles-grid wrap">
+        <div>
+          <span class="eyebrow">ARAH KONTRIBUSI</span>
+          <h2 id="roles-title">Dari data mentah menuju langkah yang bisa dibahas.</h2>
+          <p class="roles-intro">Saya ingin berkembang bersama tim yang menggunakan data untuk memahami masalah, meningkatkan proses analisis, dan mengambil keputusan dengan dasar yang lebih jelas.</p>
+        </div>
+        <div class="role-list" aria-label="Area pekerjaan yang relevan">
+          <div class="role-item"><span>01</span>Data Analyst</div>
+          <div class="role-item"><span>02</span>Market Research</div>
+          <div class="role-item"><span>03</span>Business Intelligence</div>
+          <div class="role-item"><span>04</span>Data Operations</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="tentang">
+      <div class="about-grid wrap">
+        <div><span class="eyebrow">Tentang saya</span><h2>Deni Somantri</h2></div>
+        <div class="about-copy">
+          <p>Saya tertarik pada <strong>analisis data, riset pasar, dan pembuatan alat yang membantu tim memahami data</strong>—dari file operasional hingga teks konten.</p>
+          <p>Portofolio ini menampilkan proyek mandiri dan prototipe yang saya bangun dengan Python, Pandas, dan Flask. Saya berfokus pada alur yang bisa ditinjau: bagaimana data dibersihkan, apa yang dihitung, apa keterbatasannya, dan apa yang layak diuji berikutnya.</p>
+          <div class="skills" aria-label="Keahlian dan tools">
+            <span class="chip">Python</span><span class="chip">Pandas</span><span class="chip">Flask</span><span class="chip">Analisis data</span><span class="chip">Analisis teks</span><span class="chip">Excel</span><span class="chip">Riset pasar</span>
+          </div>
+          <div class="note">Angka pada studi ini adalah frekuensi dalam sampel, bukan ukuran total pasar. Hasil eksplorasi perlu divalidasi dan tidak mewakili seluruh konsumen.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact" id="kontak">
+      <div class="contact-inner wrap">
+        <div><span class="eyebrow">TERBUKA UNTUK PELUANG</span><h2>Mari ubah pertanyaan data menjadi langkah berikutnya.</h2><p>Saya tertarik berdiskusi tentang peluang Data Analyst, Market Research, Business Intelligence, atau proyek analisis yang membutuhkan proses terstruktur dan transparan.</p></div>
+        <div class="contact-actions">
+          <a class="button" href="/app">Lihat aplikasi <span aria-hidden="true">↗</span></a>
+          <a class="button contact-link" href="https://www.linkedin.com/in/deni-somantri" target="_blank" rel="noopener noreferrer">Hubungi melalui LinkedIn <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner wrap"><span>© <span id="year"></span> Deni Somantri</span><span>Portofolio dan prototipe analisis data · <a href="/app">Buka workbench</a></span></div>
+  </footer>
+  <script>
+    const toggle = document.querySelector(".menu-toggle");
+    const menu = document.querySelector(".nav-links");
+    toggle.addEventListener("click", () => {
+      const isOpen = menu.classList.toggle("open");
+      toggle.setAttribute("aria-expanded", String(isOpen));
+      toggle.setAttribute("aria-label", isOpen ? "Tutup menu" : "Buka menu");
+    });
+    menu.querySelectorAll("a").forEach((link) => link.addEventListener("click", () => {
+      menu.classList.remove("open");
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.setAttribute("aria-label", "Buka menu");
+    }));
+    const demoTabs = document.querySelectorAll(".demo-switch [role='tab']");
+    demoTabs.forEach((tab) => tab.addEventListener("click", () => {
+      demoTabs.forEach((item) => item.setAttribute("aria-selected", String(item === tab)));
+      document.querySelectorAll(".demo-panel").forEach((panel) => {
+        panel.hidden = panel.id !== tab.getAttribute("aria-controls");
+      });
+    }));
+    document.querySelector("#year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

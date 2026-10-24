@@ -1,0 +1,27 @@
+[build]
+command = "mkdir -p dist && cp index.html dist/index.html"
+publish = "dist"
+
+[[redirects]]
+from = "/app"
+to = "https://market-insight-backend-deni.onrender.com/app"
+status = 200
+force = true
+
+[[redirects]]
+from = "/api/*"
+to = "https://market-insight-backend-deni.onrender.com/api/:splat"
+status = 200
+force = true
+
+[[redirects]]
+from = "/template.csv"
+to = "https://market-insight-backend-deni.onrender.com/template.csv"
+status = 200
+force = true
+
+[[redirects]]
+from = "/contoh-data.csv"
+to = "https://market-insight-backend-deni.onrender.com/contoh-data.csv"
+status = 200
+force = true

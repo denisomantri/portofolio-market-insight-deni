@@ -1,0 +1,726 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f3f6f8">
+  <meta name="description" content="Analisis data tabel CSV dan Excel atau bandingkan caption kompetitor.">
+  <title>Analisis Data | Market Insight</title>
+  <style>
+    :root {
+      --ink: #182833;
+      --muted: #687982;
+      --paper: #f3f6f8;
+      --white: #fff;
+      --line: #dfe7eb;
+      --green: #167c80;
+      --dark-green: #105e65;
+      --mint: #e4f2f2;
+      --coral: #d47c4d;
+      --shadow: 0 12px 34px rgb(27 52 65 / 6%);
+      --serif: Georgia, "Times New Roman", serif;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); line-height: 1.55; }
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; }
+    .wrap { width: min(1120px, calc(100% - 42px)); margin-inline: auto; }
+    .topbar { position: sticky; z-index: 5; top: 0; border-bottom: 1px solid var(--line); background: rgb(255 255 255 / 92%); backdrop-filter: blur(12px); }
+    .nav { display: flex; height: 72px; align-items: center; justify-content: space-between; }
+    .brand { display: flex; align-items: center; gap: 11px; font-size: .93rem; font-weight: 750; }
+    .brand-icon { display: grid; width: 36px; height: 36px; place-items: center; border-radius: 9px; background: #193b4a; color: white; font: 700 .7rem ui-monospace, monospace; }
+    .nav-right { display: flex; align-items: center; gap: 22px; color: var(--muted); font-size: .83rem; }
+    .status { display: inline-flex; align-items: center; gap: 8px; }
+    .status::before { width: 7px; height: 7px; border-radius: 50%; background: #58a66d; content: ""; }
+    .hero { padding: 56px 0 34px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 9px; color: var(--green); font-size: .73rem; font-weight: 750; letter-spacing: .13em; text-transform: uppercase; }
+    .eyebrow::before { width: 20px; height: 1px; background: currentColor; content: ""; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { max-width: 760px; margin: 12px 0 12px; font: 500 clamp(2.45rem, 5vw, 3.8rem)/1.05 var(--serif); letter-spacing: -.055em; }
+    h1 em { color: var(--green); font-weight: 500; }
+    .hero p { max-width: 640px; margin: 0; color: var(--muted); font-size: 1rem; }
+    .layout { display: grid; grid-template-columns: 340px 1fr; align-items: start; gap: 24px; padding-bottom: 72px; }
+    .panel, .results-panel { border: 1px solid var(--line); border-radius: 10px; background: var(--white); box-shadow: var(--shadow); }
+    .panel { position: sticky; top: 94px; padding: 23px; }
+    .panel h2 { margin: 0 0 5px; font: 500 1.55rem var(--serif); letter-spacing: -.035em; }
+    .panel-intro { margin: 0 0 21px; color: var(--muted); font-size: .81rem; }
+    .method-box { margin-top: 18px; padding-top: 15px; border-top: 1px solid var(--line); }
+    .method-label { display: block; margin-bottom: 7px; color: var(--green); font: 700 .64rem ui-monospace, monospace; letter-spacing: .08em; text-transform: uppercase; }
+    .method-box p { margin: 0; color: var(--muted); font-size: .7rem; }
+    .format-example { margin: 11px 0 0; padding: 10px; border-radius: 7px; background: #f4f7f7; color: #52656e; font: .68rem/1.6 ui-monospace, monospace; white-space: pre-wrap; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 24px; }
+    .step { padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; background: rgb(255 255 255 / 75%); }
+    .step strong { display: block; margin-bottom: 2px; font-size: .75rem; }
+    .step span { color: var(--muted); font-size: .69rem; }
+    .mode-switch { display: flex; flex-wrap: wrap; gap: 9px; margin: 0 0 18px; }
+    .mode-button { min-height: 40px; padding: 8px 14px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); font-size: .76rem; font-weight: 700; cursor: pointer; }
+    .mode-button[aria-pressed="true"] { border-color: var(--green); background: var(--mint); color: var(--dark-green); }
+    .mode-help { margin: 0 0 14px; color: var(--muted); font-size: .75rem; }
+    .field { margin-top: 16px; }
+    .field label { display: block; margin-bottom: 6px; font-size: .79rem; font-weight: 680; }
+    .field input[type="text"], .field input[type="number"] {
+      width: 100%; min-height: 42px; padding: 10px 12px; border: 1px solid #dce4dc; border-radius: 8px; outline: none; background: #fff; color: var(--ink); font-size: .85rem;
+    }
+    .field input:focus, .dropzone:focus-within { border-color: var(--green); box-shadow: 0 0 0 3px rgb(35 124 90 / 12%); }
+    .hint { display: block; margin-top: 5px; color: var(--muted); font-size: .7rem; }
+    .dropzone { display: grid; min-height: 112px; padding: 14px; place-items: center; border: 1px dashed #b9c9bb; border-radius: 9px; background: #fbfcfa; text-align: center; cursor: pointer; }
+    .dropzone.dragging { border-color: var(--green); background: var(--mint); }
+    .drop-icon { display: grid; width: 31px; height: 31px; margin: 0 auto 7px; place-items: center; border-radius: 10px; background: var(--mint); color: var(--green); font-weight: 800; }
+    .dropzone strong { display: block; font-size: .78rem; }
+    .dropzone span { color: var(--muted); font-size: .69rem; }
+    .file-name { overflow: hidden; max-width: 260px; margin-top: 5px; color: var(--green-dark) !important; text-overflow: ellipsis; white-space: nowrap; }
+    .check-row { display: flex; align-items: flex-start; gap: 9px; margin: 17px 0; color: #526057; font-size: .72rem; }
+    .check-row input { margin-top: 3px; accent-color: var(--green); }
+    .primary, .download {
+      display: inline-flex; width: 100%; min-height: 45px; align-items: center; justify-content: center; gap: 9px; border: 1px solid var(--green); border-radius: 8px; background: var(--green); color: white; font-size: .85rem; font-weight: 700; cursor: pointer; transition: background .18s ease, transform .18s ease;
+    }
+    .primary:hover, .download:hover { transform: translateY(-1px); background: var(--dark-green); }
+    .primary:disabled { cursor: wait; opacity: .68; transform: none; }
+    .privacy-note { margin: 13px 0 0; color: var(--muted); font-size: .68rem; }
+    .results-panel { min-height: 455px; overflow: hidden; }
+    .empty-state { display: grid; min-height: 455px; padding: 34px; place-items: center; text-align: center; }
+    .empty-icon { display: grid; width: 52px; height: 52px; margin: 0 auto 15px; place-items: center; border-radius: 16px; background: var(--mint); color: var(--green); font-size: 1.3rem; }
+    .empty-state h2 { margin-bottom: 8px; font: 500 1.65rem var(--serif); letter-spacing: -.03em; }
+    .empty-state p { max-width: 380px; margin: 0; color: var(--muted); font-size: .84rem; }
+    .error-box { display: none; margin: 18px 0 0; padding: 12px 14px; border: 1px solid #f1d2c4; border-radius: 8px; background: #fff5ef; color: #954523; font-size: .78rem; }
+    .results { display: none; }
+    .results-head { padding: 25px 26px 17px; border-bottom: 1px solid var(--line); }
+    .results-head h2 { margin: 8px 0 4px; font: 500 1.75rem var(--serif); letter-spacing: -.04em; }
+    .source-line { margin: 0; color: var(--muted); font-size: .73rem; }
+    .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 11px; padding: 16px 20px; border-bottom: 1px solid var(--line); }
+    .metric { padding: 11px 12px; border: 1px solid var(--line); border-radius: 9px; background: #fcfdfa; }
+    .metric span { display: block; color: var(--muted); font-size: .67rem; }
+    .metric strong { display: block; margin-top: 2px; color: var(--green-dark); font: 500 1.6rem var(--serif); }
+    .metric small { display: block; margin-top: 3px; color: var(--muted); font-size: .62rem; }
+    .content-section { padding: 23px 26px; border-bottom: 1px solid var(--line); }
+    .content-section:last-child { border-bottom: 0; }
+    .section-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 15px; }
+    .section-title h3 { margin: 0; font-size: .95rem; }
+    .section-title span { color: var(--muted); font-size: .7rem; }
+    .compare-table { width: 100%; border-collapse: collapse; font-size: .75rem; }
+    .compare-table th { padding: 9px 7px; color: var(--muted); font-size: .66rem; font-weight: 650; text-align: left; }
+    .compare-table td { padding: 11px 7px; border-top: 1px solid #edf0ec; vertical-align: middle; }
+    .compare-table td:first-child { min-width: 128px; font-weight: 650; }
+    .bar-cell { min-width: 145px; }
+    .bar-value { display: flex; align-items: center; gap: 8px; }
+    .bar-track { overflow: hidden; width: min(100%, 135px); height: 7px; border-radius: 10px; background: #edf1ec; }
+    .bar-fill { height: 100%; border-radius: inherit; background: var(--green); }
+    .bar-value span { min-width: 36px; color: var(--muted); font-size: .68rem; }
+    .compare-foot { margin: 12px 0 0; color: var(--muted); font-size: .68rem; }
+    .column-table, .preview-table { width: 100%; border-collapse: collapse; font-size: .73rem; }
+    .column-table th, .preview-table th { position: sticky; top: 0; padding: 9px; background: #f5f7f3; color: var(--muted); text-align: left; white-space: nowrap; }
+    .column-table td, .preview-table td { max-width: 300px; padding: 9px; border-top: 1px solid var(--line); vertical-align: top; overflow-wrap: anywhere; }
+    .column-table td:first-child { min-width: 110px; font-weight: 650; }
+    .table-scroll { overflow: auto; max-height: 370px; border: 1px solid var(--line); border-radius: 8px; }
+    .finding-list { margin: 0; padding-left: 18px; color: var(--muted); font-size: .77rem; }
+    .finding-list li + li { margin-top: 6px; }
+    .profile-note { margin: 0 0 14px; color: var(--muted); font-size: .72rem; }
+    .comparison-status { margin: 0 0 13px; padding: 9px 11px; border-radius: 6px; background: #f2f6f7; color: #52656e; font-size: .69rem; }
+    .insight-card { padding: 14px 15px; border-left: 2px solid var(--coral); border-radius: 0 8px 8px 0; background: #fffaf6; }
+    .insight-card + .insight-card { margin-top: 10px; }
+    .insight-card strong { display: block; margin-bottom: 4px; font-size: .78rem; }
+    .insight-card p { margin: 0; color: #655c54; font-size: .75rem; }
+    .table-wrap { overflow: auto; max-height: 340px; border: 1px solid var(--line); border-radius: 8px; }
+    .sample-table { width: 100%; border-collapse: collapse; font-size: .71rem; }
+    .sample-table th { position: sticky; top: 0; padding: 9px; background: #f5f7f3; color: var(--muted); text-align: left; }
+    .sample-table td { padding: 9px; border-top: 1px solid var(--line); vertical-align: top; }
+    .sample-table td:first-child { min-width: 105px; font-weight: 650; }
+    .sample-table td:nth-child(2) { min-width: 230px; }
+    .tag { display: inline-block; margin: 2px; padding: 3px 7px; border-radius: 20px; background: var(--mint); color: var(--green-dark); font-size: .64rem; }
+    .notes { margin: 0; padding-left: 17px; color: var(--muted); font-size: .72rem; }
+    .notes li + li { margin-top: 5px; }
+    .method-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .extra-details { border-bottom: 1px solid var(--line); }
+    .extra-details summary { padding: 15px 26px; color: var(--dark-green); font-size: .78rem; font-weight: 700; cursor: pointer; }
+    .extra-details .content-section { border-bottom: 0; padding-top: 8px; }
+    .method-item { padding: 11px 12px; border: 1px solid var(--line); border-radius: 7px; background: #fbfcfd; }
+    .method-item strong { display: block; margin-bottom: 4px; color: var(--green-dark); font: 700 .65rem ui-monospace, monospace; text-transform: uppercase; }
+    .method-item span { color: var(--muted); font-size: .68rem; }
+    .results-actions { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 18px 26px; background: #fbfcfa; }
+    .results-actions p { max-width: 400px; margin: 0; color: var(--muted); font-size: .68rem; }
+    .download { width: auto; min-width: 190px; padding: 0 17px; }
+    .footer { padding: 18px 0 28px; border-top: 1px solid var(--line); color: var(--muted); font-size: .7rem; }
+    .footer-inner { display: flex; justify-content: space-between; gap: 15px; }
+    @media (max-width: 850px) {
+      .layout { grid-template-columns: 290px 1fr; gap: 15px; }
+      .panel { padding: 18px; }
+      .results-head, .content-section { padding-inline: 19px; }
+      .metrics { gap: 7px; padding-inline: 12px; }
+      .metric { padding: 9px; }
+      .metric strong { font-size: 1.35rem; }
+    }
+    @media (max-width: 680px) {
+      .wrap { width: min(100% - 30px, 520px); }
+      .nav { height: 62px; }
+      .nav-right { gap: 8px; font-size: .7rem; }
+      .hero { padding: 49px 0 26px; }
+      h1 { font-size: clamp(2.65rem, 13vw, 3.7rem); }
+      .hero p { font-size: .88rem; }
+      .layout { grid-template-columns: 1fr; padding-bottom: 45px; }
+      .panel { position: static; }
+      .steps { grid-template-columns: 1fr; gap: 7px; }
+      .results-panel, .empty-state { min-height: 300px; }
+      .metrics { grid-template-columns: repeat(2, 1fr); padding: 13px; }
+      .results-head { padding: 19px; }
+      .content-section { padding: 19px; }
+      .compare-table { min-width: 560px; }
+      .results-actions { align-items: stretch; flex-direction: column; padding: 17px 19px; }
+      .download { width: 100%; }
+      .method-grid { grid-template-columns: 1fr; }
+      .footer-inner { flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="nav wrap" aria-label="Navigasi utama">
+      <a class="brand" href="/">
+        <span class="brand-icon">MI</span>
+        <span>DENI SOMANTRI · DATA PORTFOLIO</span>
+      </a>
+      <div class="nav-right"><a href="/">← Kembali ke portofolio</a><span class="status">Prototipe lokal</span></div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero wrap">
+      <span class="eyebrow">PORTOFOLIO · PROTOTIPE INTERAKTIF</span>
+      <h1>Pahami data Anda,<br><em>langkah demi langkah.</em></h1>
+      <p>Analisis tabel CSV/Excel—seperti penjualan, survei, inventaris, atau pemasaran—dengan ringkasan yang jelas. Anda juga tetap bisa membandingkan caption kompetitor.</p>
+      <div class="steps" aria-label="Langkah menggunakan aplikasi">
+        <div class="step"><strong>1. Pilih jenis analisis</strong><span>Data tabel umum atau caption kompetitor.</span></div>
+        <div class="step"><strong>2. Unggah file</strong><span>Pilih CSV atau Excel yang berisi judul kolom.</span></div>
+        <div class="step"><strong>3. Pahami ringkasan</strong><span>Lihat profil kolom dan contoh baris data.</span></div>
+      </div>
+    </section>
+
+    <div class="mode-switch wrap" role="group" aria-label="Pilih jenis analisis">
+      <button class="mode-button" id="general-mode" type="button" aria-pressed="true">Analisis data umum</button>
+      <button class="mode-button" id="competitor-mode" type="button" aria-pressed="false">Bandingkan caption kompetitor</button>
+    </div>
+    <div class="layout wrap">
+      <aside class="panel">
+        <div id="general-tools">
+          <h2>Analisis data umum</h2>
+          <p class="panel-intro">Unggah tabel apa pun yang tersusun dalam baris dan kolom.</p>
+          <p class="mode-help">Contoh: penjualan, survei pelanggan, stok barang, atau hasil kampanye.</p>
+          <form id="profile-form">
+            <div class="field">
+              <label for="profile-file">File data (CSV / Excel)</label>
+              <input id="profile-file" name="file" type="file" accept=".csv,.xlsx,.xls" hidden required>
+              <label class="dropzone" id="profile-dropzone" for="profile-file" tabindex="0">
+                <span>
+                  <span class="drop-icon" aria-hidden="true">↑</span>
+                  <strong>Pilih file atau tarik ke sini</strong>
+                  <span>CSV atau Excel · maksimal 10 MB</span>
+                  <span class="file-name" id="profile-file-name">Belum ada file dipilih</span>
+                </span>
+              </label>
+              <span class="hint">Kolom angka, kategori, tanggal, dan teks diringkas berbeda.</span>
+              <a class="hint" href="/contoh-data.csv" download>Lihat contoh data penjualan</a>
+            </div>
+            <button class="primary" id="profile-submit" type="submit">Analisis data <span aria-hidden="true">→</span></button>
+            <p class="privacy-note">File diproses sementara oleh server aplikasi dan tidak disimpan permanen. Jangan unggah data rahasia. Maksimal 50.000 baris dan 60 kolom.</p>
+            <div class="error-box" id="profile-error" role="alert"></div>
+          </form>
+        </div>
+        <div id="competitor-tools" hidden>
+          <h2>Bandingkan caption</h2>
+          <p class="panel-intro">Butuh kolom caption dan nama merek.</p>
+          <form id="analysis-form">
+          <div class="field">
+            <label for="keyword">Topik yang ingin diteliti</label>
+            <input id="keyword" name="keyword" type="text" placeholder="Contoh: kopi instan" maxlength="80" required>
+            <span class="hint">Topik ini dipakai untuk menyaring caption yang sesuai.</span>
+          </div>
+          <div class="field">
+            <label for="file">File data caption</label>
+            <input id="file" name="file" type="file" accept=".csv,.xlsx,.xls" hidden required>
+            <label class="dropzone" id="dropzone" for="file" tabindex="0">
+              <span>
+                <span class="drop-icon" aria-hidden="true">↑</span>
+                <strong>Pilih file atau tarik ke sini</strong>
+                <span>CSV atau Excel · maksimal 10 MB</span>
+                <span class="file-name" id="file-name">Belum ada file dipilih</span>
+              </span>
+            </label>
+            <span class="hint">Minimal 2 merek dan 1 caption yang sesuai per merek.</span>
+            <a class="hint" href="/template.csv" download>Unduh format CSV kosong</a>
+            <span class="hint">Contoh susunan kolom (ganti dengan data Anda):</span>
+            <pre class="format-example">caption,brand
+"Tas ringan untuk sehari-hari",Merek A
+"Tas kerja dengan banyak ruang",Merek B</pre>
+          </div>
+          <input id="limit" name="limit" type="hidden" value="100">
+          <button class="primary" id="submit-button" type="submit">Lihat perbandingan <span aria-hidden="true">→</span></button>
+          <p class="privacy-note">Gunakan data yang boleh Anda olah. File diproses sementara oleh server aplikasi dan tidak disimpan permanen; jangan unggah data rahasia.</p>
+          <div class="error-box" id="error-box" role="alert"></div>
+          </form>
+        </div>
+      </aside>
+
+      <section class="results-panel" aria-live="polite">
+        <div class="empty-state" id="empty-state">
+          <div>
+            <div class="empty-icon" aria-hidden="true">↗</div>
+            <h2>Hasil analisis akan tampil di sini</h2>
+            <p>Pilih jenis analisis, unggah file CSV/Excel, lalu mulai. Data umum tidak memerlukan format caption khusus.</p>
+          </div>
+        </div>
+        <div class="results" id="profile-results">
+          <div class="results-head">
+            <span class="eyebrow">RINGKASAN DATA</span>
+            <h2 id="profile-title"></h2>
+            <p class="source-line" id="profile-source"></p>
+          </div>
+          <div class="metrics" id="profile-metrics"></div>
+          <section class="content-section">
+            <div class="section-title"><h3>Ringkasan isi data</h3></div>
+            <ul class="finding-list" id="profile-findings"></ul>
+          </section>
+          <section class="content-section">
+            <div class="section-title"><h3>Profil setiap kolom</h3><span id="profile-column-count"></span></div>
+            <p class="profile-note">Angka menampilkan rentang dan nilai tengah. Kategori menampilkan nilai terbanyak. Tanggal menampilkan rentang waktu. Ini ringkasan deskriptif, bukan prediksi.</p>
+            <div class="table-scroll"><table class="column-table" id="profile-columns"></table></div>
+          </section>
+          <details class="extra-details">
+            <summary>Lihat contoh baris data</summary>
+            <section class="content-section">
+              <div class="table-scroll"><table class="preview-table" id="profile-preview"></table></div>
+            </section>
+          </details>
+          <div class="results-actions">
+            <p>Laporan Excel berisi ringkasan, profil kolom, dan contoh data.</p>
+            <a class="download" id="profile-download" href="#">Unduh laporan Excel</a>
+          </div>
+        </div>
+        <div class="results" id="results">
+          <div class="results-head">
+            <span class="eyebrow">RINGKASAN HASIL</span>
+            <h2 id="result-title"></h2>
+            <p class="source-line" id="source-line"></p>
+          </div>
+          <div class="metrics" id="metrics"></div>
+          <section class="content-section">
+            <div class="section-title"><h3>Tema yang muncul di tiap merek</h3><span id="brand-count"></span></div>
+            <p class="comparison-status" id="comparison-status"></p>
+            <div style="overflow:auto"><table class="compare-table" id="comparison-table"></table></div>
+            <p class="compare-foot">Persentase menunjukkan porsi caption pada file Anda, bukan pangsa pasar atau minat semua pelanggan.</p>
+          </section>
+          <section class="content-section">
+            <div class="section-title"><h3>Ide langkah berikutnya</h3><span>Gunakan sebagai hipotesis</span></div>
+            <div id="experiments"></div>
+          </section>
+          <details class="extra-details">
+            <summary>Lihat caption yang dianalisis (<span id="sample-count"></span>)</summary>
+            <section class="content-section">
+              <div class="table-wrap"><table class="sample-table" id="sample-table"></table></div>
+            </section>
+          </details>
+          <details class="extra-details">
+            <summary>Cara membaca hasil dan batasannya</summary>
+            <section class="content-section">
+              <div class="method-grid" id="method-grid"></div>
+              <ul class="notes" id="notes"></ul>
+            </section>
+          </details>
+          <div class="results-actions">
+            <p>Ingin menyimpan hasil atau membagikannya ke tim? Unduh laporan Excel.</p>
+            <a class="download" id="download-link" href="#">Unduh laporan Excel</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner wrap"><span>Market Insight · Deni Somantri</span><span>Gunakan data sesuai aturan sumber dan ketentuan yang berlaku.</span></div>
+  </footer>
+
+  <script>
+    const form = document.querySelector("#analysis-form");
+    const profileForm = document.querySelector("#profile-form");
+    const fileInput = document.querySelector("#file");
+    const fileName = document.querySelector("#file-name");
+    const dropzone = document.querySelector("#dropzone");
+    const errorBox = document.querySelector("#error-box");
+    const submitButton = document.querySelector("#submit-button");
+    const emptyState = document.querySelector("#empty-state");
+    const results = document.querySelector("#results");
+    const profileFileInput = document.querySelector("#profile-file");
+    const profileDropzone = document.querySelector("#profile-dropzone");
+    const profileError = document.querySelector("#profile-error");
+    const profileSubmit = document.querySelector("#profile-submit");
+
+    function showError(message) {
+      errorBox.textContent = message;
+      errorBox.style.display = "block";
+    }
+    function hideError() {
+      errorBox.textContent = "";
+      errorBox.style.display = "none";
+    }
+    function hideProfileError() {
+      profileError.textContent = "";
+      profileError.style.display = "none";
+    }
+    function appendCell(row, text, tagName = "td") {
+      const cell = document.createElement(tagName);
+      cell.textContent = text;
+      row.append(cell);
+      return cell;
+    }
+    function displayValue(value) {
+      if (value === null || value === undefined || value === "") return "—";
+      if (typeof value === "number") return new Intl.NumberFormat("id-ID", {maximumFractionDigits: 3}).format(value);
+      return String(value);
+    }
+    function setMode(mode) {
+      const general = mode === "general";
+      document.querySelector("#general-tools").hidden = !general;
+      document.querySelector("#competitor-tools").hidden = general;
+      document.querySelector("#general-mode").setAttribute("aria-pressed", String(general));
+      document.querySelector("#competitor-mode").setAttribute("aria-pressed", String(!general));
+      emptyState.style.display = "grid";
+      results.style.display = "none";
+      document.querySelector("#profile-results").style.display = "none";
+    }
+    function renderProfile(data) {
+      document.querySelector("#profile-title").textContent = "Ringkasan data";
+      document.querySelector("#profile-source").textContent =
+        `File: ${data.source} · Lembar: ${data.sheet}`;
+      const metrics = [
+        ["Baris dianalisis", data.row_count, data.truncated ? "50.000 baris pertama" : "Semua baris pada lembar ini"],
+        ["Jumlah kolom", data.column_count, "Kolom pada tabel"],
+        ["Sel kosong", data.missing_count, `${displayValue(data.missing_percent)}% dari seluruh sel`],
+        ["Format", "CSV / Excel", "Data berbentuk tabel"],
+      ];
+      const metricContainer = document.querySelector("#profile-metrics");
+      metricContainer.replaceChildren();
+      for (const [label, value, detail] of metrics) {
+        const card = document.createElement("div");
+        card.className = "metric";
+        const heading = document.createElement("span");
+        heading.textContent = label;
+        const number = document.createElement("strong");
+        number.textContent = displayValue(value);
+        const note = document.createElement("small");
+        note.textContent = detail;
+        card.append(heading, number, note);
+        metricContainer.append(card);
+      }
+      const findings = document.querySelector("#profile-findings");
+      findings.replaceChildren();
+      for (const finding of data.findings) {
+        const item = document.createElement("li");
+        item.textContent = finding;
+        findings.append(item);
+      }
+      document.querySelector("#profile-column-count").textContent =
+        `${data.profiles.length} kolom`;
+      const table = document.querySelector("#profile-columns");
+      table.replaceChildren();
+      const header = document.createElement("tr");
+      for (const heading of ["Kolom", "Jenis data", "Kosong / format", "Nilai unik", "Ringkasan"]) {
+        appendCell(header, heading, "th");
+      }
+      table.append(header);
+      for (const column of data.profiles) {
+        let summary = "";
+        if (column.type === "Angka") {
+          summary = `Min ${displayValue(column.minimum)} · Maks ${displayValue(column.maximum)} · Rata-rata ${displayValue(column.mean)} · Median ${displayValue(column.median)}`;
+        } else if (column.type === "Tanggal") {
+          summary = `${displayValue(column.minimum)} sampai ${displayValue(column.maximum)}`;
+        } else if (column.type === "Kategori") {
+          summary = column.top_values.length
+            ? column.top_values.map(item => `${item.value} (${item.count})`).join(" · ")
+            : "Tidak ada nilai";
+        } else {
+          summary = `Rata-rata ${displayValue(column.average_length)} karakter · Contoh: ${(column.examples || []).join(" / ")}`;
+        }
+        const row = document.createElement("tr");
+        appendCell(row, column.column);
+        appendCell(row, column.type);
+        appendCell(row, `${column.missing} kosong${column.unparsed ? ` · ${column.unparsed} format` : ""} (${displayValue(column.missing_percent)}%)`);
+        appendCell(row, displayValue(column.unique));
+        appendCell(row, summary);
+        table.append(row);
+      }
+      const preview = document.querySelector("#profile-preview");
+      preview.replaceChildren();
+      const headings = data.profiles.map(column => column.column);
+      const previewHead = document.createElement("tr");
+      for (const name of headings) appendCell(previewHead, name, "th");
+      preview.append(previewHead);
+      for (const record of data.preview) {
+        const row = document.createElement("tr");
+        for (const name of headings) appendCell(row, displayValue(record[name]));
+        preview.append(row);
+      }
+      document.querySelector("#profile-download").href =
+        `/api/report/${encodeURIComponent(data.report_id)}?keyword=data`;
+      emptyState.style.display = "none";
+      results.style.display = "none";
+      document.querySelector("#profile-results").style.display = "block";
+      document.querySelector("#profile-results").scrollIntoView({behavior: "smooth", block: "start"});
+    }
+    function percentBar(value) {
+      const container = document.createElement("div");
+      container.className = "bar-value";
+      const track = document.createElement("div");
+      track.className = "bar-track";
+      const fill = document.createElement("div");
+      fill.className = "bar-fill";
+      fill.style.width = `${Math.max(0, Math.min(100, value))}%`;
+      track.append(fill);
+      const label = document.createElement("span");
+      label.textContent = `${value.toFixed(1)}%`;
+      container.append(track, label);
+      return container;
+    }
+    function renderResult(data) {
+      document.querySelector("#result-title").textContent = `Hasil untuk “${data.keyword}”`;
+      document.querySelector("#source-line").textContent = `File: ${data.source}`;
+      document.querySelector("#brand-count").textContent = `${data.brands.length} merek`;
+      document.querySelector("#sample-count").textContent = `${data.samples.length} baris`;
+      document.querySelector("#metrics").replaceChildren();
+      const metricData = [
+        ["Merek dibandingkan", data.brands.length, data.brands.join(" · ")],
+        ["Caption dianalisis", data.sample_count, "Setelah filter topik dan penghapusan duplikat"],
+        ["Caption duplikat dihapus", data.quality["Duplikat yang dihapus"], "Duplikat dihitung per merek"],
+        ["Caption lolos pemeriksaan", data.quality["Teks layak setelah filter dasar"], `Dari ${data.quality["Kandidat dari sumber"]} baris di file`],
+      ];
+      for (const [label, value, detail] of metricData) {
+        const card = document.createElement("div");
+        card.className = "metric";
+        const name = document.createElement("span");
+        name.textContent = label;
+        const number = document.createElement("strong");
+        number.textContent = value;
+        const foot = document.createElement("small");
+        foot.textContent = detail;
+        card.append(name, number, foot);
+        document.querySelector("#metrics").append(card);
+      }
+
+      const table = document.querySelector("#comparison-table");
+      table.replaceChildren();
+      const header = document.createElement("tr");
+      appendCell(header, "Tema", "th");
+      for (const brand of data.brands) {
+        appendCell(header, `${brand} (${data.group_sizes[brand]} caption)`, "th");
+      }
+      const deltaColumns = {};
+      for (const brand of data.brands.slice(1)) {
+        const referenceRow = data.comparison.find(row =>
+          row["Kompetitor / Segmen"] === brand
+        );
+        const deltaColumn = referenceRow
+          ? Object.keys(referenceRow).find(key => key.startsWith("Selisih vs "))
+          : null;
+        if (deltaColumn) {
+          deltaColumns[brand] = deltaColumn;
+          appendCell(header, `Selisih (poin persentase) vs ${data.brands[0]}`, "th");
+        }
+      }
+      table.append(header);
+      document.querySelector("#comparison-status").textContent =
+        `Persentase menunjukkan berapa banyak caption sampel yang menyebut tema. Selisih dibandingkan dengan ${data.brands[0]}.`;
+      const themes = [...new Set(data.comparison.map(row => row["Tema"]))];
+      for (const theme of themes) {
+        const row = document.createElement("tr");
+        appendCell(row, theme);
+        for (const brand of data.brands) {
+          const cell = document.createElement("td");
+          cell.className = "bar-cell";
+          const comparison = data.comparison.find(item =>
+            item["Tema"] === theme && item["Kompetitor / Segmen"] === brand
+          );
+          cell.append(percentBar(comparison ? comparison["Porsi Caption (%)"] : 0));
+          row.append(cell);
+        }
+        for (const brand of Object.keys(deltaColumns)) {
+          const delta = data.comparison.find(item =>
+            item["Tema"] === theme && item["Kompetitor / Segmen"] === brand
+          );
+          const value = delta ? delta[deltaColumns[brand]] : null;
+          appendCell(row, value === null ? "—" : `${value > 0 ? "+" : ""}${value} pp`);
+        }
+        table.append(row);
+      }
+
+      const experiments = document.querySelector("#experiments");
+      experiments.replaceChildren();
+      for (const item of data.experiments) {
+        const card = document.createElement("article");
+        card.className = "insight-card";
+        const title = document.createElement("strong");
+        title.textContent = `${item["Prioritas"]} · ${item["Status"]}`;
+        const basis = document.createElement("p");
+        basis.textContent = item["Dasar temuan"];
+        const action = document.createElement("p");
+        action.style.marginTop = "7px";
+        action.textContent = `Yang bisa dicoba: ${item["Eksperimen yang disarankan"]}`;
+        const metric = document.createElement("p");
+        metric.style.marginTop = "5px";
+        metric.textContent = `Amati: ${item["Metrik untuk diuji"]}`;
+        card.append(title, basis, action, metric);
+        experiments.append(card);
+      }
+
+      const sampleTable = document.querySelector("#sample-table");
+      sampleTable.replaceChildren();
+      const sampleHeader = document.createElement("tr");
+      for (const heading of ["Merek", "Caption", "Tema yang terdeteksi", "Jenis konten (perkiraan)"]) {
+        appendCell(sampleHeader, heading, "th");
+      }
+      sampleTable.append(sampleHeader);
+      for (const item of data.samples) {
+        const row = document.createElement("tr");
+        appendCell(row, item["Merek / Kompetitor"] || "—");
+        appendCell(row, item["Sampel Caption"]);
+        appendCell(row, item["Tema yang Terdeteksi"]);
+        appendCell(row, item["Angle Konten (heuristik)"]);
+        sampleTable.append(row);
+      }
+
+      const notes = document.querySelector("#notes");
+      notes.replaceChildren();
+      for (const note of data.notes) {
+        const item = document.createElement("li");
+        item.textContent = note;
+        notes.append(item);
+      }
+      const methodGrid = document.querySelector("#method-grid");
+      methodGrid.replaceChildren();
+      const methodLabels = {
+        sampling: "Sumber data",
+        classification: "Cara tema ditentukan",
+        comparison: "Cara membandingkan",
+        uncertainty: "Rentang ketidakpastian",
+      };
+      for (const [label, value] of Object.entries(data.methodology)) {
+        const item = document.createElement("div");
+        item.className = "method-item";
+        const name = document.createElement("strong");
+        name.textContent = methodLabels[label] || label;
+        const detail = document.createElement("span");
+        detail.textContent = value;
+        item.append(name, detail);
+        methodGrid.append(item);
+      }
+      document.querySelector("#download-link").href =
+        `/api/report/${encodeURIComponent(data.report_id)}?keyword=${encodeURIComponent(data.keyword)}`;
+      emptyState.style.display = "none";
+      results.style.display = "block";
+      results.scrollIntoView({behavior: "smooth", block: "start"});
+    }
+
+    fileInput.addEventListener("change", () => {
+      fileName.textContent = fileInput.files.length ? fileInput.files[0].name : "Belum ada file dipilih";
+      hideError();
+    });
+    profileFileInput.addEventListener("change", () => {
+      document.querySelector("#profile-file-name").textContent =
+        profileFileInput.files.length ? profileFileInput.files[0].name : "Belum ada file dipilih";
+      hideProfileError();
+    });
+    document.querySelector("#general-mode").addEventListener("click", () => setMode("general"));
+    document.querySelector("#competitor-mode").addEventListener("click", () => setMode("competitor"));
+    profileDropzone.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        profileFileInput.click();
+      }
+    });
+    for (const eventName of ["dragenter", "dragover"]) {
+      profileDropzone.addEventListener(eventName, event => {
+        event.preventDefault();
+        profileDropzone.classList.add("dragging");
+      });
+    }
+    for (const eventName of ["dragleave", "drop"]) {
+      profileDropzone.addEventListener(eventName, event => {
+        event.preventDefault();
+        profileDropzone.classList.remove("dragging");
+      });
+    }
+    profileDropzone.addEventListener("drop", event => {
+      if (event.dataTransfer.files.length) {
+        profileFileInput.files = event.dataTransfer.files;
+        profileFileInput.dispatchEvent(new Event("change"));
+      }
+    });
+    dropzone.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        fileInput.click();
+      }
+    });
+    for (const eventName of ["dragenter", "dragover"]) {
+      dropzone.addEventListener(eventName, event => {
+        event.preventDefault();
+        dropzone.classList.add("dragging");
+      });
+    }
+    for (const eventName of ["dragleave", "drop"]) {
+      dropzone.addEventListener(eventName, event => {
+        event.preventDefault();
+        dropzone.classList.remove("dragging");
+      });
+    }
+    dropzone.addEventListener("drop", event => {
+      const files = event.dataTransfer.files;
+      if (files.length) {
+        fileInput.files = files;
+        fileInput.dispatchEvent(new Event("change"));
+      }
+    });
+
+    profileForm.addEventListener("submit", async event => {
+      event.preventDefault();
+      hideProfileError();
+      if (!profileForm.reportValidity()) return;
+      profileSubmit.disabled = true;
+      profileSubmit.textContent = "Menganalisis data…";
+      try {
+        const response = await fetch("/api/profile", {
+          method: "POST",
+          body: new FormData(profileForm),
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || "Analisis data gagal.");
+        renderProfile(result);
+      } catch (error) {
+        profileError.textContent = error.message || "Tidak bisa terhubung ke aplikasi lokal.";
+        profileError.style.display = "block";
+      } finally {
+        profileSubmit.disabled = false;
+        profileSubmit.innerHTML = 'Analisis data <span aria-hidden="true">→</span>';
+      }
+    });
+
+    form.addEventListener("submit", async event => {
+      event.preventDefault();
+      hideError();
+      if (!form.reportValidity()) return;
+      submitButton.disabled = true;
+      submitButton.textContent = "Menganalisis sampel…";
+      const body = new FormData(form);
+      try {
+        const response = await fetch("/api/analyze", {method: "POST", body});
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || "Analisis gagal.");
+        renderResult(result);
+      } catch (error) {
+        showError(error.message || "Tidak bisa terhubung ke aplikasi lokal.");
+      } finally {
+        submitButton.disabled = false;
+        submitButton.innerHTML = 'Lihat perbandingan <span aria-hidden="true">→</span>';
+      }
+    });
+  </script>
+</body>
+</html>
