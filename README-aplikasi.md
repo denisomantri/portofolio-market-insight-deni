@@ -16,15 +16,15 @@ Server hanya terikat ke `127.0.0.1` dan tidak dibagikan ke jaringan lokal.
 
 ## Deploy untuk pengujian publik
 
-Netlify menayangkan portfolio, sedangkan backend Flask dijalankan di Render. Proxy Netlify meneruskan halaman workbench dan permintaan API ke backend agar semua fitur tetap dapat diuji melalui satu domain.
+Portfolio statis sudah dapat ditayangkan di Netlify. Untuk menjalankan workbench analisis, host backend Flask secara terpisah di PythonAnywhere:
 
-1. Buat repository GitHub dari folder proyek ini, lalu unggah file aplikasi. Pastikan `.gitignore` mengecualikan `chrome_profile/` dan `tiktok_session_folder/`; folder browser lokal tersebut tidak boleh diunggah.
-2. Di Render, buat **Blueprint** dari repository tersebut. Render membaca `render.yaml` dan memasang backend menggunakan `requirements-app.txt`.
-3. Setelah service Render aktif, pastikan URL backend sesuai dengan nama service `market-insight-backend-deni` di `render.yaml`. Jika Render memberikan URL berbeda, ubah URL tujuan pada setiap aturan proxy di `netlify.toml` agar sama.
-4. Di Netlify, pilih **Add new site → Import an existing project** dan hubungkan repository yang sama. Gunakan konfigurasi build dari `netlify.toml`, lalu deploy.
-5. Buka domain Netlify. Uji tombol **Coba aplikasi**, unggah CSV contoh, jalankan analisis, dan unduh laporan Excel.
+1. Unggah atau clone repository ke `/home/deni999/mysite` pada PythonAnywhere. Pastikan `app.py`, `scraper_market_intelligence.py`, `tabular_analysis.py`, folder `templates`, dan `requirements-app.txt` ada di sana.
+2. Pasang dependensi proyek di virtualenv PythonAnywhere dengan `pip install -r /home/deni999/mysite/requirements-app.txt`.
+3. Buka file WSGI `/var/www/deni999_pythonanywhere_com_wsgi.py` dari tab **Web** PythonAnywhere, lalu salin isi file `deni999_pythonanywhere_com_wsgi.py` dari repository ini ke sana. File dalam repository adalah salinan konfigurasi; mengunggahnya ke GitHub tidak otomatis mengubah file WSGI di server.
+4. Atur virtualenv aplikasi di tab **Web**, lalu klik **Reload**.
+5. Setelah backend tersedia di `https://deni999.pythonanywhere.com`, ubah tujuan proxy pada `netlify.toml` dari host Render menjadi domain PythonAnywhere, lalu commit dan push perubahan tersebut agar Netlify melakukan deploy ulang.
 
-Backend memakai paket gratis Render yang dapat tidur saat tidak aktif, sehingga permintaan pertama setelah jeda mungkin perlu waktu untuk bangun. File unggahan tidak disimpan permanen oleh aplikasi, tetapi diproses di server hosting. Karena situs publik tidak memerlukan login, jangan unggah data pribadi atau rahasia. Hasil unduhan disimpan sementara di memori service dan dapat hilang saat service dimulai ulang.
+File unggahan diproses oleh server dan tidak disimpan permanen oleh aplikasi. Karena situs publik tidak memerlukan login, jangan unggah data pribadi atau rahasia. Lihat batasan penggunaan paket hosting sebelum membagikan aplikasi untuk pengujian.
 
 ## Analisis data umum
 
