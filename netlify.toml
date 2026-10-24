@@ -4,24 +4,24 @@ publish = "dist"
 
 [[redirects]]
 from = "/app"
-to = "https://market-insight-backend-deni.onrender.com/app"
+to = "https://deni999.pythonanywhere.com/app"
 status = 200
 force = true
 
 [[redirects]]
 from = "/api/*"
-to = "https://market-insight-backend-deni.onrender.com/api/:splat"
+to = "https://deni999.pythonanywhere.com/api/:splat"
 status = 200
 force = true
 
 [[redirects]]
 from = "/template.csv"
-to = "https://market-insight-backend-deni.onrender.com/template.csv"
+to = "https://deni999.pythonanywhere.com/template.csv"
 status = 200
 force = true
 
 [[redirects]]
 from = "/contoh-data.csv"
-to = "https://market-insight-backend-deni.onrender.com/contoh-data.csv"
+to = "https://deni999.pythonanywhere.com/contoh-data.csv"
 status = 200
 force = true

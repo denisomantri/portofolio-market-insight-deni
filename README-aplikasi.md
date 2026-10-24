@@ -22,7 +22,7 @@ Portfolio statis sudah dapat ditayangkan di Netlify. Untuk menjalankan workbench
 2. Pasang dependensi proyek di virtualenv PythonAnywhere dengan `pip install -r /home/deni999/mysite/requirements-app.txt`.
 3. Buka file WSGI `/var/www/deni999_pythonanywhere_com_wsgi.py` dari tab **Web** PythonAnywhere, lalu salin isi file `deni999_pythonanywhere_com_wsgi.py` dari repository ini ke sana. File dalam repository adalah salinan konfigurasi; mengunggahnya ke GitHub tidak otomatis mengubah file WSGI di server.
 4. Atur virtualenv aplikasi di tab **Web**, lalu klik **Reload**.
-5. Setelah backend tersedia di `https://deni999.pythonanywhere.com`, ubah tujuan proxy pada `netlify.toml` dari host Render menjadi domain PythonAnywhere, lalu commit dan push perubahan tersebut agar Netlify melakukan deploy ulang.
+5. Konfigurasi `netlify.toml` sudah meneruskan halaman aplikasi, API, dan file contoh ke `https://deni999.pythonanywhere.com`. Setelah backend PythonAnywhere aktif, Netlify akan memakai konfigurasi tersebut pada deploy berikutnya.
 
 File unggahan diproses oleh server dan tidak disimpan permanen oleh aplikasi. Karena situs publik tidak memerlukan login, jangan unggah data pribadi atau rahasia. Lihat batasan penggunaan paket hosting sebelum membagikan aplikasi untuk pengujian.
 
